@@ -2,6 +2,7 @@ const currentTemp = document.querySelector("#current-temp");
 const weatherIcon = document.querySelector("#weather-icon");
 const weatherImgWrapper = document.querySelector("#weather-img-wrapper");
 const captionDesc = document.querySelector("figcaption");
+const recommendationText = document.querySelector("#recommendation-text");
 
 const url =
   "https://api.openweathermap.org/data/2.5/weather?lat=43.82298397846127&lon=-111.79384857810895&appid=a1078278c70be949e15364ecfc53d10e&units=imperial";
@@ -16,6 +17,7 @@ async function apiFetch() {
       const data = await response.json();
       console.log(data); // testing only
       displayResults(data);
+      updateRecommendations(data); // Call to update clothing recommendation
     } else {
       throw Error(await response.text());
     }
@@ -32,18 +34,9 @@ async function apiFetch() {
   }
 }
 
-async function fetchWeatherData() {
-    const response = await fetch(URL);
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    const weatherData = await response.json();
-    return weatherData;
-}
-
 function displayResults(data) {
   currentTemp.innerHTML = `${data.main.temp.toFixed(0)}&deg;F`;
-    const iconsrc = `https://openweathermap.org/img/w/${data.weather[0].icon}.png`;
+  const iconsrc = `https://openweathermap.org/img/w/${data.weather[0].icon}.png`;
   let desc = data.weather[0].description;
 
   // Create img element and set attributes
@@ -82,34 +75,22 @@ function displayWeatherForecast(data) {
   });
 }
 
+function updateRecommendations(data) {
+  const temp = data.main.temp; // Get actual temperature data from the weather data
+  let recommendation = "";
+
+  if (temp < 32) {
+    recommendation = "Dress warmly, it’s cold outside.";
+  } else if (temp >= 32 && temp < 60) {
+    recommendation = "It's a bit chilly, consider wearing a jacket.";
+  } else if (temp >= 60 && temp < 80) {
+    recommendation = "The weather is nice, dress comfortably.";
+  } else {
+    recommendation = "It’s warm, don't forget sunscreen!";
+  }
+
+  recommendationText.textContent = recommendation;
+}
+
 // Fetch weather data on page load
 apiFetch();
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Assuming you have a function to fetch weather data
-    fetchWeatherData().then(weatherData => {
-        updateCurrentTemp(weatherData);
-        updateWeatherImage(weatherData);
-        updateWeatherForecast(weatherData);
-        updateRecommendations(weatherData);
-    });
-});
-
-function updateRecommendations(weatherData) {
-    const recommendationText = document.getElementById('recommendation-text');
-    const temp = weatherData.currentTemp; // Replace with actual temperature data from weatherData
-    let recommendation = '';
-
-    if (temp < 5) {
-        recommendation = "Dress warmly, it’s cold outside.";
-    } else if (temp >= 5 && temp < 20) {
-        recommendation = "It's a bit chilly, consider wearing a jacket.";
-    } else if (temp >= 20 && temp < 30) {
-        recommendation = "The weather is nice, dress comfortably.";
-    } else {
-        recommendation = "It’s sunny, don’t forget sunscreen.";
-    }
-
-    recommendationText.textContent = recommendation;
-}

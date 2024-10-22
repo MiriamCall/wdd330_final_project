@@ -3,10 +3,11 @@ header {
     color: white;
     padding: 1em;
     text-align: center;
+    font-size: 3rem;
 }
 
 h2 {
-    color: #4C4B63;
+    color: black;
     font-size: 1.5em;
     margin: 0;
     padding: 0.5em;
@@ -14,11 +15,9 @@ h2 {
 }
 
 .current-temp {
-    color: #4C4B63;
+    color: black;
     font-size: 2em;
-    margin: 0;
     padding: 0.5em;
-    text-align: center;
 }
 
 .card {
@@ -29,3 +28,8 @@ h2 {
     margin: 0rem 1rem 1rem 1rem;
     text-align: center;
   }
+
+.recommendations {
+    font-size: 1.5em;
+    padding: 1rem;
+}
