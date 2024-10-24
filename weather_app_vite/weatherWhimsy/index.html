@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parent Weather Radar</title>
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/larger.css" />
+    <script type="module" src="./scripts/main.js" defer></script>
+  </head>
+  <body>
+    <header class="example-header">
+      <h1 class="header-title">Parent Weather Radar</h1>
+    </header>
+    <main class="example-main">
+      <section class="hero-section">
+        <img
+          class="hero-image"
+          src="./assets/weather-map-svgrepo-com.svg"
+          alt="weather hero image"
+          loading="lazy"
+        />
+      </section>
+      <section
+        class="current-weather-section"
+        aria-labelledby="current-weather-title"
+      >
+        <h2 id="current-weather-title">
+          Current Weather for <span id="current-date"></span>
+        </h2>
+        <p class="current-weather-text">
+          Current temperature: <span id="current-temp">Loading...</span>
+        </p>
+        <figure>
+          <div
+            id="weather-img-wrapper"
+            class="weather-img-wrapper"
+            aria-label="weather icon"
+          ></div>
+          <figcaption id="weather-desc">Loading...</figcaption>
+        </figure>
+        <p class="current-weather-recommendation">
+          Recommendation: <span id="recommendation-text">Loading...</span>
+        </p>
+      </section>
+      <section
+        class="five-day-weather-section"
+        aria-labelledby="five-day-weather-title"
+      >
+        <h2 id="five-day-weather-title">5 Day Forecast</h2>
+        <div class="five-day-weather-wrapper" id="forecast">
+          <!-- Placeholder for dynamic forecast data -->
+        </div>
+      </section>
+    </main>
+    <footer class="example-footer">
+      <p>Miriam Call | WDD 330 | 2024</p>
+    </footer>
+
+    <script>
+      // Example to dynamically set current date in the h2 element
+      const currentDate = new Date();
+      const dateOptions = { weekday: "long", month: "long", day: "numeric" };
+      document.getElementById("current-date").textContent =
+        currentDate.toLocaleDateString("en-US", dateOptions);
+    </script>
+  </body>
+</html>

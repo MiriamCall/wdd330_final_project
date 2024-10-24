@@ -1,14 +1,55 @@
+require("dotenv").config();
+
 const currentTemp = document.querySelector("#current-temp");
 const weatherIcon = document.querySelector("#weather-icon");
 const weatherImgWrapper = document.querySelector("#weather-img-wrapper");
 const captionDesc = document.querySelector("figcaption");
 const recommendationText = document.querySelector("#recommendation-text");
+let lon;
+let lat;
 
-const url =
-  "https://api.openweathermap.org/data/2.5/weather?lat=43.82298397846127&lon=-111.79384857810895&appid=a1078278c70be949e15364ecfc53d10e&units=imperial";
+document.addEventListener("DOMContentLoaded", () => {
+  getLocation();
+  getWeatherdata();
+});
 
-const forecastUrl =
-  "https://api.openweathermap.org/data/2.5/forecast?lat=43.82298397846127&lon=-111.79384857810895&appid=a1078278c70be949e15364ecfc53d10e&units=imperial";
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      lat = position.coords.latitude;
+      lon = position.coords.longitude;
+      console.log(lat, lon); // testing only
+    });
+  } else {
+    alert("Geolocation is not supported by this browser.");
+  }
+}
+
+// const url =
+//   "https://api.openweathermap.org/data/2.5/weather?lat=43.82298397846127&lon=-111.79384857810895&appid=a1078278c70be949e15364ecfc53d10e&units=imperial";
+
+// const forecastUrl =
+//   "https://api.openweathermap.org/data/2.5/forecast?lat=43.82298397846127&lon=-111.79384857810895&appid=a1078278c70be949e15364ecfc53d10e&units=imperial";
+
+const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&units=imperial`;
+
+async function getWeatherdata() {
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw Error("ERROR: Unable to fetch weather data");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data); // testing only
+      displayResults(data);
+      updateRecommendations(data); // Call to update clothing recommendation
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 async function apiFetch() {
   try {
