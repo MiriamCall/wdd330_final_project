@@ -1,10 +1,10 @@
 const API_key = import.meta.env.VITE_API_KEY;
 
 const currentTemp = document.querySelector("#current-temp");
-const weatherIcon = document.querySelector("#weather-icon");
 const weatherImgWrapper = document.querySelector("#weather-img-wrapper");
-const captionDesc = document.querySelector("figcaption");
+const captionDesc = document.querySelector("#weather-desc");
 const recommendationText = document.querySelector("#recommendation-text");
+const forecastWrapper = document.querySelector("#forecast");
 
 document.addEventListener("DOMContentLoaded", () => {
   getLocation();
@@ -15,49 +15,79 @@ function getLocation() {
     navigator.geolocation.getCurrentPosition((position) => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
-      const url = updateUrl(lat, lon);
-      getWeatherdata(url);
+      console.log(lat, lon); // testing only
+      const weatherUrl = createWeatherUrl(lat, lon);
+      const forecastUrl = createForecastUrl(lat, lon);
+      getWeatherData(weatherUrl);
+      getForecastData(forecastUrl);
     });
   } else {
     alert("Geolocation is not supported by this browser.");
   }
 }
 
-function updateUrl(lat, lon) {
+function createWeatherUrl(lat, lon) {
   return `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&units=imperial`;
 }
 
-async function getWeatherdata(url) {
+function createForecastUrl(lat, lon) {
+  return `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_key}&units=imperial`;
+}
+
+async function getWeatherData(url) {
   try {
     const response = await fetch(url);
     if (response.ok) {
       const data = await response.json();
-      displayResults(data);
-      updateRecommendations(data);
+      console.log(data); // testing only
+      displayWeatherData(data);
+      updateRecommendations(data.main.temp);
     } else {
-      throw new Error("ERROR: Unable to fetch weather data");
+      throw new Error("Error fetching weather data.");
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-function displayResults(data) {
-  currentTemp.innerHTML = `${data.main.temp.toFixed(0)}&deg;F`;
-  const iconsrc = `https://openweathermap.org/img/w/${data.weather[0].icon}.png`;
-  const desc = data.weather[0].description;
-
-  const weatherImg = document.createElement("img");
-  weatherImg.setAttribute("src", iconsrc);
-  weatherImg.setAttribute("alt", desc);
-  weatherImgWrapper.appendChild(weatherImg);
-  captionDesc.textContent = desc;
+async function getForecastData(url) {
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); // testing only
+      displayForecastData(data);
+    } else {
+      throw new Error("Error fetching forecast data.");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function displayWeatherForecast(data) {
-  const weatherForecast = document.getElementById("weather-forecast");
-  weatherForecast.innerHTML = "<h2>3-Day Forecast</h2>";
+function displayWeatherData(data) {
+  const temp = data.main.temp.toFixed(0);
+  const description = data.weather[0].description;
+  const iconSrc = `https://openweathermap.org/img/w/${data.weather[0].icon}.png`;
 
+  // Update the current temperature
+  currentTemp.textContent = `${temp}°F`;
+
+  // Create and append the weather icon image
+  weatherImgWrapper.innerHTML = ""; // Clear previous image
+  const weatherImg = document.createElement("img");
+  weatherImg.setAttribute("src", iconSrc);
+  weatherImg.setAttribute("alt", description);
+  weatherImgWrapper.appendChild(weatherImg);
+
+  // Update the weather description
+  captionDesc.textContent = description;
+}
+
+function displayForecastData(data) {
+  forecastWrapper.innerHTML = ""; // Clear previous forecast data
+
+  // Group forecast data by day
   const forecast = {};
   data.list.forEach((item) => {
     const date = new Date(item.dt_txt).toDateString();
@@ -67,23 +97,22 @@ function displayWeatherForecast(data) {
     forecast[date].push(item.main.temp);
   });
 
-  const forecastKeys = Object.keys(forecast).slice(0, 3);
+  // Display the next 5 days of forecast
+  const forecastKeys = Object.keys(forecast).slice(0, 5);
   forecastKeys.forEach((day) => {
     const temps = forecast[day];
-    const avgTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
+    const avgTemp = (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(
+      0
+    );
 
     const forecastDay = document.createElement("div");
-    forecastDay.className = "forecast-day";
-    forecastDay.innerHTML = `<p>${day}: Average Temperature: ${avgTemp.toFixed(
-      0
-    )}°F</p>`;
-
-    weatherForecast.appendChild(forecastDay);
+    forecastDay.className = "individual-day-wrapper";
+    forecastDay.innerHTML = `<p>Date: ${day}</p><p>Avg Temp: ${avgTemp}°F</p>`;
+    forecastWrapper.appendChild(forecastDay);
   });
 }
 
-function updateRecommendations(data) {
-  const temp = data.main.temp;
+function updateRecommendations(temp) {
   let recommendation = "";
 
   if (temp < 32) {

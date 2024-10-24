@@ -5,22 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parent Weather Radar</title>
     <link rel="stylesheet" href="./css/main.css" />
-    <link rel="stylesheet" href="./css/larger.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <script type="module" src="./scripts/main.js" defer></script>
   </head>
   <body>
     <header class="example-header">
       <h1 class="header-title">Parent Weather Radar</h1>
+      <h3>let the us help you know what clothes to prepare for your kiddos!</h3>
+      <p>We give you the weather data snappy and quick with no fuss and fee</p>
     </header>
     <main class="example-main">
-      <section class="hero-section">
+      <!-- <section class="hero-section">
         <img
           class="hero-image"
           src="./assets/weather-map-svgrepo-com.svg"
           alt="weather hero image"
           loading="lazy"
+          width="400"
+          height="400"
         />
-      </section>
+      </section> -->
       <section
         class="current-weather-section"
         aria-labelledby="current-weather-title"
@@ -28,17 +35,15 @@
         <h2 id="current-weather-title">
           Current Weather for <span id="current-date"></span>
         </h2>
-        <p class="current-weather-text">
-          Current temperature: <span id="current-temp">Loading...</span>
-        </p>
-        <figure>
-          <div
-            id="weather-img-wrapper"
-            class="weather-img-wrapper"
-            aria-label="weather icon"
-          ></div>
-          <figcaption id="weather-desc">Loading...</figcaption>
-        </figure>
+        <div class="weather-info">
+          <p class="current-weather-text">
+            Temperature: <span id="current-temp">Loading...</span>
+          </p>
+          <figure>
+            <div id="weather-img-wrapper" class="weather-img-wrapper"></div>
+            <figcaption id="weather-desc">Loading...</figcaption>
+          </figure>
+        </div>
         <p class="current-weather-recommendation">
           Recommendation: <span id="recommendation-text">Loading...</span>
         </p>
@@ -56,13 +61,5 @@
     <footer class="example-footer">
       <p>Miriam Call | WDD 330 | 2024</p>
     </footer>
-
-    <script>
-      // Example to dynamically set current date in the h2 element
-      const currentDate = new Date();
-      const dateOptions = { weekday: "long", month: "long", day: "numeric" };
-      document.getElementById("current-date").textContent =
-        currentDate.toLocaleDateString("en-US", dateOptions);
-    </script>
   </body>
 </html>
